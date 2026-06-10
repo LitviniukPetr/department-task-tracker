@@ -1,0 +1,38 @@
+{% extends 'tasks/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Завдання — {{ department }}</h2>
+    {% if user.profile.is_manager %}
+    <a href="{% url 'task_create' %}" class="btn btn-primary">+ Нове завдання</a>
+    {% endif %}
+</div>
+
+{% if tasks %}
+<div class="row">
+    {% for task in tasks %}
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">{{ task.title }}</h5>
+                    {% if task.status == 'active' %}
+                    <span class="badge badge-active bg-danger">Активне</span>
+                    {% else %}
+                    <span class="badge badge-done bg-success">Виконане</span>
+                    {% endif %}
+                </div>
+                <p class="card-text text-muted">{{ task.description|truncatewords:20 }}</p>
+                <p class="card-text"><small>📅 Дедлайн: <strong>{{ task.deadline }}</strong></small></p>
+                <a href="{% url 'task_detail' task.pk %}" class="btn btn-outline-primary btn-sm">Детальніше</a>
+                {% if user.profile.is_manager %}
+                <a href="{% url 'task_edit' task.pk %}" class="btn btn-outline-secondary btn-sm">Редагувати</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">Завдань для вашого підрозділу немає.</div>
+{% endif %}
+{% endblock %}
